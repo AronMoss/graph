@@ -13,33 +13,41 @@ function calculateRange(points) {
     let minY = Math.min(...points.map(p => p.y));
     let maxY = Math.max(...points.map(p => p.y));
     
-    // Add 20% padding to the range
-    const xPadding = (maxX - minX) * 0.2;
-    const yPadding = (maxY - minY) * 0.2;
+    // Calculate the largest range needed
+    const range = Math.max(
+        Math.abs(minX),
+        Math.abs(maxX),
+        Math.abs(minY),
+        Math.abs(maxY)
+    );
     
-    // Ensure range is at least -10 to 10
-    minX = Math.min(-10, minX - xPadding);
-    maxX = Math.max(10, maxX + xPadding);
-    minY = Math.min(-10, minY - yPadding);
-    maxY = Math.max(10, maxY + yPadding);
-    
-    // Make range symmetric if needed
-    const xRange = Math.max(Math.abs(minX), Math.abs(maxX));
-    const yRange = Math.max(Math.abs(minY), Math.abs(maxY));
+    // Limit maximum range to prevent excessive scaling
+    const maxRange = 50;
+    const finalRange = Math.min(range, maxRange);
     
     return {
-        minX: -xRange,
-        maxX: xRange,
-        minY: -yRange,
-        maxY: yRange
+        minX: -finalRange,
+        maxX: finalRange,
+        minY: -finalRange,
+        maxY: finalRange
     };
 }
 
 function generatePoints(isQuadratic, params) {
     const points = [];
-    // Use more points for smoother curves
-    const step = 0.1;
-    const range = 20; // Initial range to calculate points
+    
+    // Determine initial range based on equation type and coefficients
+    let range;
+    if (isQuadratic) {
+        // For quadratic, base range on coefficients
+        const a = Math.abs(params.a);
+        range = Math.min(Math.sqrt(50/a), 20); // Limit y values to reasonable range
+    } else {
+        range = 20; // Default range for linear
+    }
+    
+    // Adjust step size based on range
+    const step = range / 200; // 200 points for smooth curve
     
     for (let x = -range; x <= range; x += step) {
         let y;
