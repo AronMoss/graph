@@ -168,3 +168,12 @@ canvas#graphCanvas {
     position: relative;
     margin: 20px 0;
 }
+
+.author {
+    text-align: center;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: normal;
+}
